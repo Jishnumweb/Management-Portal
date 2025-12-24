@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://management-portal-xxxxx.onrender.com/api/$1"
+    }
+  ]
+}
