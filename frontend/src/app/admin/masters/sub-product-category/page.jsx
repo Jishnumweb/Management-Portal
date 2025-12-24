@@ -1,0 +1,12 @@
+import React from 'react'
+
+function page() {
+  return (
+    <div>
+        sub-product-category
+      
+    </div>
+  )
+}
+
+export default page
