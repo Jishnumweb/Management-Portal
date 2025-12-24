@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 
 function Frontpage() {
   useEffect(()=>{
-    redirect("/admin/dashboard")
+    redirect("/admin/leads")
 
   },[])
   return (

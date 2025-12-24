@@ -10,10 +10,10 @@ const generateToken = (res, userId, role, type) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // HTTPS only in production
-    sameSite: "strict",
-    maxAge: (process.env.COOKIE_EXPIRE || 7) * 24 * 60 * 60 * 1000, // days → ms
-    path: "/",
+    secure: true, // HTTPS only in production
+    sameSite: "none",
+ maxAge: 7 * 24 * 60 * 60 * 1000,
+     path: "/",
   });
 
   return token;
@@ -95,10 +95,10 @@ export const logout = async (req, res) => {
   try {
     res.cookie("token", "", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // must match login
-      sameSite: "strict", // must match login
-      expires: new Date(0), // expire immediately
-      path: "/", // must match login
+      secure: true, // must match login
+ sameSite: "none",
+  expires: new Date(0),
+        path: "/", // must match login
     });
 
     return res.status(200).json({
