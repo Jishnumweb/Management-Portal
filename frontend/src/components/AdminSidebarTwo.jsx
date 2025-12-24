@@ -46,27 +46,27 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
   };
 
   const core = [
-    { title: "Dashboard", link: "/admin/dashboard", icon: Home },
+    // { title: "Dashboard", link: "/admin/dashboard", icon: Home },
     {
       title: "Masters",
       icon: LayoutGrid,
       subItems: [
-        {
-          title: "Bank Details",
-          link: "/admin/masters/bank-details",
-          icon: Landmark,
-        },
+        // {
+        //   title: "Bank Details",
+        //   link: "/admin/masters/bank-details",
+        //   icon: Landmark,
+        // },
         {
           title: "Product Category",
           link: "/admin/masters/product-category",
           icon: ShoppingCart,
         },
 
-        {
-          title: "Leave Type",
-          link: "/admin/masters/leave-type",
-          icon: BookPlus,
-        },
+        // {
+        //   title: "Leave Type",
+        //   link: "/admin/masters/leave-type",
+        //   icon: BookPlus,
+        // },
         {
           title: "Lead Reference",
           link: "/admin/masters/lead-reference",
@@ -77,27 +77,27 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
           link: "/admin/masters/lead-status",
           icon: FileChartPie,
         },
-        { title: "Holiday", link: "/admin/masters/holiday", icon: TentTree },
-        {
-          title: "Position",
-          link: "/admin/masters/position",
-          icon: UserRoundCog,
-        },
-        {
-          title: "Department",
-          link: "/admin/masters/department",
-          icon: ShieldHalf,
-        },
-        {
-          title: "Task Status",
-          link: "/admin/masters/task-status",
-          icon: CalendarCheck,
-        },
-        {
-          title: "Priority",
-          link: "/admin/masters/priority",
-          icon: ShieldAlert,
-        },
+        // { title: "Holiday", link: "/admin/masters/holiday", icon: TentTree },
+        // {
+        //   title: "Position",
+        //   link: "/admin/masters/position",
+        //   icon: UserRoundCog,
+        // },
+        // {
+        //   title: "Department",
+        //   link: "/admin/masters/department",
+        //   icon: ShieldHalf,
+        // },
+        // {
+        //   title: "Task Status",
+        //   link: "/admin/masters/task-status",
+        //   icon: CalendarCheck,
+        // },
+        // {
+        //   title: "Priority",
+        //   link: "/admin/masters/priority",
+        //   icon: ShieldAlert,
+        // },
       ],
     },
   ];
@@ -110,24 +110,24 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
     { title: "Meetings", link: "/admin/meetings", icon: Timer },
   ];
 
-  const hr = [
-    { title: "Admins", link: "/admin/admins", icon: Users },
-    { title: "Employees", link: "/admin/employees", icon: Users },
-    { title: "Attendance", link: "/admin/attendance", icon: Calendar },
-    { title: "Leaves", link: "/admin/leaves", icon: FileText },
-    {
-      title: "Tasks",
-      icon: ClipboardList,
-      subItems: [
-        {
-          title: "All Tasks",
-          link: "/admin/tasks/newtask",
-          icon: ClipboardCheck,
-        },
-        { title: "View Summary", link: "/admin/tasks", icon: ScanEye },
-      ],
-    },
-  ];
+  // const hr = [
+  //   { title: "Admins", link: "/admin/admins", icon: Users },
+  //   { title: "Employees", link: "/admin/employees", icon: Users },
+  //   { title: "Attendance", link: "/admin/attendance", icon: Calendar },
+  //   { title: "Leaves", link: "/admin/leaves", icon: FileText },
+  //   {
+  //     title: "Tasks",
+  //     icon: ClipboardList,
+  //     subItems: [
+  //       {
+  //         title: "All Tasks",
+  //         link: "/admin/tasks/newtask",
+  //         icon: ClipboardCheck,
+  //       },
+  //       { title: "View Summary", link: "/admin/tasks", icon: ScanEye },
+  //     ],
+  //   },
+  // ];
 
   const finance = [
     { title: "Invoices & Payments", link: "/admin/invoices", icon: Receipt },
@@ -211,9 +211,9 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       } md:translate-x-0  md:w-80`}
     >
-      <div className="flex items-center px-5 py-4 border-b">
+      {/* <div className="flex items-center px-5 py-4 border-b">
         <img src="/images/vydurya-logo.png" className="h-10" />
-      </div>
+      </div> */}
 
       <div className="md:hidden flex justify-end p-3">
         <button onClick={() => setSidebarOpen(false)}>
@@ -223,7 +223,7 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
 
       <Section title="Core " items={core} />
       <Section title="CRM / Business Operations" items={crm} />
-      <Section title="Human Resources (HR)" items={hr} />
+      {/* <Section title="Human Resources (HR)" items={hr} /> */}
       <Section title="Finance & Accounting" items={finance} />
 
       <div className="px-4 py-4 border-t  bg-white">

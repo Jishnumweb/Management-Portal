@@ -242,7 +242,7 @@ export function Navbar({ setSidebarOpen }) {
       {/* Right Section */}
       <div className="flex items-center gap-3">
         <h1 className="uppercase text-[#00aeef] font-bold md:block hidden">
-          Vydurya Enterprises LLP
+          Jishnu M
         </h1>
 
         <Button

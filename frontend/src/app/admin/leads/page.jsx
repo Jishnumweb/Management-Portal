@@ -14,6 +14,10 @@ import {
   Download,
   FileText,
   TrendingUp,
+  ArrowDown,
+  ArrowDownIcon,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import useAdminStore from "@/stores/useAdminStore";
 import { useRouter } from "next/navigation";
@@ -91,6 +95,7 @@ export default function LeadsPage() {
   } = useAdminStore();
 
   const [total, setTotal] = useState(0);
+  const [seaOpen, setSeaOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -493,32 +498,38 @@ export default function LeadsPage() {
             </p>
           </div>
 
-          <div className="  flex flex-col sm:flex-row gap-3 items-start sm:items-center lg:justify-end justify-between">
+          <div className="flex flex-col sm:flex-row gap-3 items-end sm:items-center justify-between lg:justify-end">
+            {/* Export Actions */}
             <div className="flex gap-2">
               <button
                 onClick={exportToExcel}
-                className="flex items-center gap-2 bg-[#57a957] hover:bg-green-700 text-white px-4 py-2 rounded-sm font-medium transition"
+                className="flex items-center gap-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition"
               >
-                <Download size={18} /> Export to Excel
-              </button>
-              <button
-                onClick={exportToPDF}
-                className="flex items-center gap-2 bg-[#d03131] hover:bg-red-700 text-white px-4 py-2 rounded-sm font-medium transition"
-              >
-                <FileText size={18} /> Export to PDF
+                <Download size={16} />
+                Excel
               </button>
 
               <button
-                className="bg-[#00aeef] hover:bg-[#0093ca] text-white px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition"
-                onClick={() => setShowAddSidebar(true)}
+                onClick={exportToPDF}
+                className="flex items-center gap-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition"
               >
-                <PlusCircle size={18} /> Add Lead
+                <FileText size={16} />
+                PDF
+              </button>
+
+              {/* Primary Action */}
+              <button
+                onClick={() => setShowAddSidebar(true)}
+                className="flex items-center gap-2 bg-[#00aeef] hover:bg-[#0093ca] text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-sm transition"
+              >
+                <PlusCircle size={18} />
+                Add Lead
               </button>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
@@ -574,81 +585,91 @@ export default function LeadsPage() {
           </div>
         </div>
 
-        {/* Search Bar and Filters Combined */}
-        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col sm:flex-row items-center gap-3">
-          <Search className="text-gray-500" size={18} />
-          <input
-            type="text"
-            placeholder="Search by name, company, email, phone..."
-            className="flex-1 border-0 focus:outline-none text-sm w-full"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-          />
-
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="border border-gray-300 w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef] flex-1 min-w-[120px]"
-          >
-            <option value="all">All Status</option>
-            {statuses.map((status) => (
-              <option key={status} value={status} className="">
-                {capitalizeWords(status)}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={filterSource}
-            onChange={(e) => setFilterSource(e.target.value)}
-            className="border w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef] flex-1 min-w-[120px]"
-          >
-            <option value="all">All Sources</option>
-            {sources.map((source) => (
-              <option key={source} value={source}>
-                {source}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={filterService}
-            onChange={(e) => setFilterService(e.target.value)}
-            className="border w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef] flex-1 min-w-[120px]"
-          >
-            <option value="all">All Services</option>
-            {services.map((service) => (
-              <option key={service._id} value={service.name}>
-                {service.name}
-              </option>
-            ))}
-          </select>
-
-          <input
-            type="date"
-            value={filterFollowUpDate}
-            onChange={(e) => setFilterFollowUpDate(e.target.value)}
-            className="border w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef] flex-1 min-w-[130px]"
-          />
-
-          <button
-            onClick={() => {
-              setFilterStatus("all");
-              setFilterSource("all");
-              setFilterService("all");
-              setFilterFollowUpDate("");
-            }}
-            className="text-sm text-[#00aeef] hover:text-[#0093ca] font-medium px-3 py-2 rounded-lg hover:bg-blue-50 transition whitespace-nowrap flex-shrink-0"
-          >
-            Clear
+        {seaOpen ? (
+          <button onClick={() => setSeaOpen(false)}>
+            <ChevronUp />
           </button>
-        </div>
+        ) : (
+          <button onClick={() => setSeaOpen(true)}>
+            <ChevronDown />
+          </button>
+        )}
 
+        {seaOpen && (
+          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col sm:flex-row items-center gap-3">
+            <Search className="text-gray-500" size={18} />
+            <input
+              type="text"
+              placeholder="Search by name, company, email, phone..."
+              className="flex-1 border-0 focus:outline-none text-sm w-full"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+            />
+
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="border border-gray-300 w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef] flex-1 min-w-[120px]"
+            >
+              <option value="all">All Status</option>
+              {statuses.map((status) => (
+                <option key={status} value={status} className="">
+                  {capitalizeWords(status)}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={filterSource}
+              onChange={(e) => setFilterSource(e.target.value)}
+              className="border w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef] flex-1 min-w-[120px]"
+            >
+              <option value="all">All Sources</option>
+              {sources.map((source) => (
+                <option key={source} value={source}>
+                  {source}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={filterService}
+              onChange={(e) => setFilterService(e.target.value)}
+              className="border w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef] flex-1 min-w-[120px]"
+            >
+              <option value="all">All Services</option>
+              {services.map((service) => (
+                <option key={service._id} value={service.name}>
+                  {service.name}
+                </option>
+              ))}
+            </select>
+
+            <input
+              type="date"
+              value={filterFollowUpDate}
+              onChange={(e) => setFilterFollowUpDate(e.target.value)}
+              className="border w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef] flex-1 min-w-[130px]"
+            />
+
+            <button
+              onClick={() => {
+                setFilterStatus("all");
+                setFilterSource("all");
+                setFilterService("all");
+                setFilterFollowUpDate("");
+              }}
+              className="text-sm text-[#00aeef] hover:text-[#0093ca] font-medium px-3 py-2 rounded-lg hover:bg-blue-50 transition whitespace-nowrap flex-shrink-0"
+            >
+              Clear
+            </button>
+          </div>
+        )}
         {/* Leads Table */}
-        <div className="overflow-x-auto bg-white border border-gray-200 rounded-xl shadow-sm">
+        <div className="overflow-x-auto mt-5 bg-white border border-gray-200 rounded-xl shadow-sm">
           <table className="w-full text-sm text-left text-gray-700">
             <thead className="bg-gray-50 text-gray-600 uppercase text-xs font-semibold">
               <tr>
