@@ -395,7 +395,7 @@ export default function LeadsContent() {
   const getStatusColor = (status) => {
     const s = (status || "").toLowerCase();
     const statusColors = {
-      draft: { bg: "bg-gray-100", text: "text-gray-700", badge: "bg-gray-500" },
+      draft: { bg: "bg-gray-100", text: "text-white", badge: "bg-gray-500" },
       new: { bg: "bg-blue-100", text: "text-blue-700", badge: "bg-blue-500" },
       "in negotiation": {
         bg: "bg-yellow-100",
@@ -410,7 +410,7 @@ export default function LeadsContent() {
       loose: { bg: "bg-red-100", text: "text-red-700", badge: "bg-red-500" },
       canceled: {
         bg: "bg-gray-100",
-        text: "text-gray-700",
+        text: "text-white",
         badge: "bg-gray-500",
       },
       assigned: {
@@ -513,17 +513,17 @@ export default function LeadsContent() {
           <div className="mb-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
               <div>
-                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
+                <h1 className="text-xl sm:text-2xl font-bold text-[#2F81F7]">
                   Leads
                 </h1>
-                <p className="text-gray-600 mt-2">
+                <p className="text-[#ffffffb9] ">
                   Manage and track all your sales leads
                 </p>
               </div>
 
               <button
                 onClick={() => setShowAddSidebar(true)}
-                className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#00aeef] to-[#0093ca] hover:shadow-lg text-white px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 transform hover:scale-105"
+                className="flex items-center justify-center gap-2 bg-[#238636] hover:shadow-lg text-white px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 transform hover:scale-105"
               >
                 <PlusCircle size={18} />
                 Add Lead
@@ -560,13 +560,13 @@ export default function LeadsContent() {
           </div>
 
           {/* Search & Filter Bar */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
-            <div className="flex items-center gap-2 mb-4 sm:mb-0">
+          <div className="-background rounded-xl shadow-sm border border-[#ffffff3b] lg:p-1 p-2 mb-6">
+            <div className="flex items-center gap-2 sm:mb-0 justify-center">
               <Search className="text-gray-400" size={18} />
               <input
                 type="text"
                 placeholder="Search by name, company, email..."
-                className="flex-1 bg-transparent border-0 focus:outline-none text-sm"
+                className="flex-1 bg-transparent border-0 placeholder:text-[#ffffff75] focus:outline-none text-sm"
                 value={search}
                 onChange={(e) => {
                   setSearch(e.target.value);
@@ -575,7 +575,7 @@ export default function LeadsContent() {
               />
               <button
                 onClick={() => setFilterOpen(!filterOpen)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-600 transition"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-background cursor-pointer text-gray-600 transition"
               >
                 <Filter size={18} />
                 <span className="hidden sm:inline text-sm font-medium">
@@ -586,11 +586,11 @@ export default function LeadsContent() {
 
             {/* Advanced Filters */}
             {filterOpen && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-4 border-t border-gray-200">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-4 border-t border-[#ffffff3b]">
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                  className="border text-white bg-background border-[#ffffff3b] rounded-lg px-3 py-2 text-sm focus:outline-none  focus:ring-[#83898b]"
                 >
                   <option value="all">All Status</option>
                   {statuses.map((status) => (
@@ -603,7 +603,7 @@ export default function LeadsContent() {
                 <select
                   value={filterSource}
                   onChange={(e) => setFilterSource(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                  className="border text-white bg-background border-[#ffffff3b] rounded-lg px-3 py-2 text-sm focus:outline-none  focus:ring-[#83898b]"
                 >
                   <option value="all">All Sources</option>
                   {sources.map((source) => (
@@ -616,7 +616,7 @@ export default function LeadsContent() {
                 <select
                   value={filterService}
                   onChange={(e) => setFilterService(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                  className="border text-white bg-background border-[#ffffff3b] rounded-lg px-3 py-2 text-sm focus:outline-none  focus:ring-[#83898b]"
                 >
                   <option value="all">All Services</option>
                   {services.map((service) => (
@@ -630,7 +630,7 @@ export default function LeadsContent() {
                   type="date"
                   value={filterFollowUpDate}
                   onChange={(e) => setFilterFollowUpDate(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                  className="border text-white bg-background border-[#ffffff3b] rounded-lg px-3 py-2 text-sm focus:outline-none  focus:ring-[#83898b]"
                 />
 
                 <button
@@ -640,7 +640,7 @@ export default function LeadsContent() {
                     setFilterService("all");
                     setFilterFollowUpDate("");
                   }}
-                  className="col-span-1 sm:col-span-2 lg:col-span-4 text-sm text-[#00aeef] hover:text-[#0093ca] font-medium px-3 py-2 rounded-lg hover:bg-blue-50 transition"
+                  className="col-span-1 sm:col-span-2 lg:col-span-4 text-sm text-[#ffffffc4] hover:text-[#d9d9d9] font-medium px-3 py-2 rounded-lg hover:bg-background transition"
                 >
                   Clear All Filters
                 </button>
@@ -652,16 +652,18 @@ export default function LeadsContent() {
           <div className="flex flex-wrap gap-2 mb-6">
             <button
               onClick={exportToExcel}
-              className="flex items-center gap-2 border-2 border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition"
+              className="flex items-center gap-2 border-2 border-[#ffffff3b] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-background transition"
             >
-              <Download size={16} />
-              <span className="hidden sm:inline">Export Excel</span>
+              <Download size={16} className="text-[#238636]" />
+              <span className="hidden sm:inline text-[#238636]">
+                Export Excel
+              </span>
               <span className="sm:hidden">Excel</span>
             </button>
 
             <button
               onClick={exportToPDF}
-              className="flex items-center gap-2 border-2 border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition"
+              className="flex items-center gap-2 border-2 border-[#ffffff3b] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-background transition"
             >
               <FileText size={16} />
               <span className="hidden sm:inline">Export PDF</span>
@@ -673,44 +675,44 @@ export default function LeadsContent() {
           {loading ? (
             <SkeletonLoader />
           ) : (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-[#0D1117] rounded-xl shadow-sm border border-[#ffffff61] overflow-hidden">
               {/* Desktop Table */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                  <thead className="bg-[#161B22] border-b border-[#ffffff4a]">
                     <tr>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                      <th className="px-6 py-4 text-left font-semibold texwhite]">
                         #
                       </th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                      <th className="px-6 py-4 text-left font-semibold text-[white]">
                         Lead Name
                       </th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                      <th className="px-6 py-4 text-left font-semibold text-[white]">
                         Company
                       </th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                      <th className="px-6 py-4 text-left font-semibold text-[white]">
                         Email
                       </th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                      <th className="px-6 py-4 text-left font-semibold text-[white]">
                         Status
                       </th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                      <th className="px-6 py-4 text-left font-semibold text-[white]">
                         Service
                       </th>
-                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                      <th className="px-6 py-4 text-left font-semibold text-[white]">
                         Follow-up
                       </th>
-                      <th className="px-6 py-4 text-center font-semibold text-gray-700">
+                      <th className="px-6 py-4 text-center font-semibold text-white">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-[#ffffff51]">
                     {filteredLeads.length === 0 ? (
                       <tr>
                         <td
                           colSpan="8"
-                          className="px-6 py-12 text-center text-gray-500"
+                          className="px-6 py-12 text-center text-white"
                         >
                           No leads found
                         </td>
@@ -719,17 +721,17 @@ export default function LeadsContent() {
                       filteredLeads.map((lead, idx) => (
                         <tr
                           key={lead._id}
-                          className="hover:bg-gray-50 transition-colors"
+                          className="hover:bg-background transition-colors"
                         >
-                          <td className="px-6 py-4 text-gray-600">
+                          <td className="px-6 py-4 text-[white]">
                             {startLeadNumber + idx}
                           </td>
                           <td className="px-6 py-4">
-                            <p className="font-semibold text-gray-900">
+                            <p className="font-semibold text-white">
                               {lead.name}
                             </p>
                           </td>
-                          <td className="px-6 py-4 text-gray-600">
+                          <td className="px-6 py-4 text-white">
                             {truncate(lead.company, 20)}
                           </td>
                           <td className="px-6 py-4">
@@ -750,31 +752,31 @@ export default function LeadsContent() {
                               {capitalizeWords(lead.status)}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-gray-600">
+                          <td className="px-6 py-4 text-white">
                             {truncate(lead.service, 15)}
                           </td>
-                          <td className="px-6 py-4 text-gray-600 text-sm">
+                          <td className="px-6 py-4 text-white text-sm">
                             {formatDate(lead.followUpDate)}
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex items-center justify-center gap-2">
                               <button
                                 onClick={() => handleViewClick(lead)}
-                                className="p-2 hover:bg-blue-50 rounded-lg text-gray-600 hover:text-[#00aeef] transition"
+                                className="p-2 hover:bg-blue-50 rounded-lg text-white hover:text-[#00aeef] transition"
                                 title="View"
                               >
                                 <Eye size={16} />
                               </button>
                               <button
                                 onClick={() => handleEditClick(lead)}
-                                className="p-2 hover:bg-yellow-50 rounded-lg text-gray-600 hover:text-yellow-600 transition"
+                                className="p-2 hover:bg-yellow-50 rounded-lg text-white hover:text-yellow-600 transition"
                                 title="Edit"
                               >
                                 <Edit3 size={16} />
                               </button>
                               <button
                                 onClick={() => handleDeleteClick(lead)}
-                                className="p-2 hover:bg-red-50 rounded-lg text-gray-600 hover:text-red-600 transition"
+                                className="p-2 hover:bg-red-50 rounded-lg text-white hover:text-red-600 transition"
                                 title="Delete"
                               >
                                 <Trash2 size={16} />
@@ -789,7 +791,7 @@ export default function LeadsContent() {
               </div>
 
               {/* Mobile Card View */}
-              <div className="md:hidden divide-y divide-gray-200">
+              <div className="md:hidden divide-y-10 divide-background">
                 {filteredLeads.length === 0 ? (
                   <div className="px-4 py-12 text-center text-gray-500">
                     No leads found
@@ -802,7 +804,7 @@ export default function LeadsContent() {
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <h3 className="font-semibold text-gray-900">
+                          <h3 className="font-semibold text-white">
                             {lead.name}
                           </h3>
                           <p className="text-sm text-gray-600">
@@ -846,19 +848,19 @@ export default function LeadsContent() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleViewClick(lead)}
-                          className="flex-1 px-3 py-2 text-xs font-medium bg-blue-50 text-[#00aeef] rounded-lg hover:bg-blue-100 transition"
+                          className="flex-1 px-3 py-2 text-xs font-medium bg-background text-[#00aeef] rounded-lg hover:bg-blue-100 transition"
                         >
                           View
                         </button>
                         <button
                           onClick={() => handleEditClick(lead)}
-                          className="flex-1 px-3 py-2 text-xs font-medium bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition"
+                          className="flex-1 px-3 py-2 text-xs font-medium bg-background text-yellow-600 rounded-lg hover:bg-yellow-100 transition"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteClick(lead)}
-                          className="flex-1 px-3 py-2 text-xs font-medium bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition"
+                          className="flex-1 px-3 py-2 text-xs font-medium bg-background text-red-600 rounded-lg hover:bg-red-100 transition"
                         >
                           Delete
                         </button>
@@ -946,9 +948,9 @@ export default function LeadsContent() {
           />
 
           <div className="relative min-h-screen flex items-end sm:items-center justify-center p-4">
-            <div className="relative bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md shadow-2xl">
+            <div className="relative bg-background rounded-t-2xl sm:rounded-2xl w-full sm:max-w-2xl shadow-2xl">
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-[#2F81F7]">
                   {showAddSidebar ? "Add New Lead" : "Edit Lead"}
                 </h2>
                 <button
@@ -956,7 +958,7 @@ export default function LeadsContent() {
                     setShowAddSidebar(false);
                     setShowEditSidebar(false);
                   }}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition"
+                  className="p-2 hover:bg-background text-[red] rounded-lg transition"
                 >
                   <X size={20} />
                 </button>
@@ -964,7 +966,7 @@ export default function LeadsContent() {
 
               <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     Name *
                   </label>
                   <input
@@ -980,13 +982,13 @@ export default function LeadsContent() {
                         });
                       }
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    className="w-full border border-gray-300 text-white placeholder:text-[#ffffff64] rounded-lg px-4 py-2 "
                     placeholder="Lead name"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     Email *
                   </label>
                   <input
@@ -1002,13 +1004,13 @@ export default function LeadsContent() {
                         });
                       }
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    className="w-full border border-gray-300 text-white placeholder:text-[#ffffff64] rounded-lg px-4 py-2 "
                     placeholder="email@example.com"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     Company
                   </label>
                   <input
@@ -1026,13 +1028,13 @@ export default function LeadsContent() {
                         });
                       }
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    className="w-full border border-gray-300 text-white placeholder:text-[#ffffff64] rounded-lg px-4 py-2 "
                     placeholder="Company name"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     Phone
                   </label>
                   <input
@@ -1048,13 +1050,13 @@ export default function LeadsContent() {
                         });
                       }
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    className="w-full border border-gray-300 text-white placeholder:text-[#ffffff64] rounded-lg px-4 py-2 "
                     placeholder="Phone number"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     Country
                   </label>
                   <input
@@ -1072,13 +1074,13 @@ export default function LeadsContent() {
                         });
                       }
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    className="w-full border border-gray-300 text-white placeholder:text-[#ffffff64] rounded-lg px-4 py-2 "
                     placeholder="Country"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     Service
                   </label>
                   <select
@@ -1095,7 +1097,7 @@ export default function LeadsContent() {
                         });
                       }
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    className="w-full border bg-background border-gray-300 text-white placeholder:text-[#ffffff64] rounded-lg px-4 py-2 "
                   >
                     <option value="">Select a service</option>
                     {services.map((service) => (
@@ -1107,7 +1109,7 @@ export default function LeadsContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     Product
                   </label>
                   <select
@@ -1124,7 +1126,7 @@ export default function LeadsContent() {
                         });
                       }
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    className="w-full border bg-background border-gray-300 text-white placeholder:text-[#ffffff64] rounded-lg px-4 py-2 "
                   >
                     <option value="">Select a product</option>
                     {products.map((product) => (
@@ -1136,7 +1138,7 @@ export default function LeadsContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     Status
                   </label>
                   <select
@@ -1153,7 +1155,7 @@ export default function LeadsContent() {
                         });
                       }
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    className="w-full border bg-background border-gray-300 text-white placeholder:text-[#ffffff64] rounded-lg px-4 py-2 "
                   >
                     {statuses.map((status) => (
                       <option key={status} value={status}>
@@ -1164,7 +1166,7 @@ export default function LeadsContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     Source
                   </label>
                   <select
@@ -1181,7 +1183,7 @@ export default function LeadsContent() {
                         });
                       }
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    className="w-full border bg-background border-gray-300 text-white placeholder:text-[#ffffff64] rounded-lg px-4 py-2 "
                   >
                     {sources.map((source) => (
                       <option key={source} value={source}>
@@ -1192,7 +1194,7 @@ export default function LeadsContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     Assigned To
                   </label>
                   <select
@@ -1214,7 +1216,7 @@ export default function LeadsContent() {
                         });
                       }
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    className="w-full bg-background border border-gray-300 text-white placeholder:text-[#ffffff64] rounded-lg px-4 py-2 "
                   >
                     <option value="">Unassigned</option>
                     {admins.map((admin) => (
@@ -1226,7 +1228,7 @@ export default function LeadsContent() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     Follow-up Date
                   </label>
                   <input
@@ -1249,12 +1251,12 @@ export default function LeadsContent() {
                         });
                       }
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    className="w-full bg-background border border-gray-300 text-white placeholder:text-[#ffffff64] rounded-lg px-4 py-2 "
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-white mb-2">
                     Notes
                   </label>
                   <textarea
@@ -1269,27 +1271,27 @@ export default function LeadsContent() {
                         });
                       }
                     }}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef] resize-none"
+                    className="w-full border border-gray-300 text-white placeholder:text-[#ffffff64] rounded-lg px-4 py-2 "
                     placeholder="Add notes..."
                     rows="3"
                   />
                 </div>
               </div>
 
-              <div className="flex gap-3 p-6 border-t border-gray-200 bg-gray-50">
+              <div className="flex gap-3 p-6 border-t border-gray-200 bg-background">
                 <button
                   onClick={() => {
                     setShowAddSidebar(false);
                     setShowEditSidebar(false);
                   }}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition"
+                  className="flex-1 px-4 py-2 border border-gray-300 placeholder:text-white rounded-lg text-white font-medium hover:bg-gray-100 transition"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={showAddSidebar ? handleAddLead : handleSaveEdit}
                   disabled={creating || editLoading || loading}
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-[#00aeef] to-[#0093ca] text-white rounded-lg font-medium hover:shadow-lg transition disabled:opacity-50"
+                  className="flex-1 px-4 py-2 bg-[#238636] text-white rounded-lg font-medium hover:shadow-lg transition disabled:opacity-50"
                 >
                   {creating || editLoading ? "Saving..." : "Save"}
                 </button>
@@ -1308,14 +1310,12 @@ export default function LeadsContent() {
           />
 
           <div className="relative min-h-screen flex items-center justify-center p-4">
-            <div className="relative bg-white rounded-2xl w-full max-w-2xl shadow-2xl">
+            <div className="relative bg-background rounded-2xl w-full max-w-2xl shadow-2xl">
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">
-                  Lead Details
-                </h2>
+                <h2 className="text-xl font-bold text-white">Lead Details</h2>
                 <button
                   onClick={() => setShowViewModel(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition"
+                  className="p-2 hover:bg-background text-[red] rounded-lg transition"
                 >
                   <X size={20} />
                 </button>
@@ -1360,17 +1360,17 @@ export default function LeadsContent() {
                 {selectedLead.notes && (
                   <div className="mt-6 pt-6 border-t border-gray-200">
                     <h3 className="font-semibold text-gray-900 mb-2">Notes</h3>
-                    <p className="text-gray-600 text-sm whitespace-pre-wrap">
+                    <p className="text-white text-sm whitespace-pre-wrap">
                       {selectedLead.notes}
                     </p>
                   </div>
                 )}
               </div>
 
-              <div className="flex gap-3 p-6 border-t border-gray-200 bg-gray-50">
+              <div className="flex gap-3 p-6 border-t border-gray-200 bg-background">
                 <button
                   onClick={() => setShowViewModel(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-white font-medium hover:bg-gray-100 transition"
                 >
                   Close
                 </button>
@@ -1379,7 +1379,7 @@ export default function LeadsContent() {
                     handleConvertToClient(selectedLead);
                     setShowViewModel(false);
                   }}
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-medium hover:shadow-lg transition"
+                  className="flex-1 px-4 py-2 bg-[#238636] text-white rounded-lg font-medium hover:shadow-lg transition"
                 >
                   Convert to Client
                 </button>
@@ -1393,21 +1393,21 @@ export default function LeadsContent() {
       {showDeleteModal && selectedLead && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div
-            className="fixed inset-0 bg-black bg-opacity-50"
+            className="fixed inset-0 bg-black/50 bg-opacity-50"
             onClick={() => setShowDeleteModal(false)}
           />
 
           <div className="relative min-h-screen flex items-center justify-center p-4">
-            <div className="relative bg-white rounded-2xl w-full max-w-sm shadow-2xl">
+            <div className="relative bg-background rounded-2xl w-full max-w-sm shadow-2xl">
               <div className="p-6 text-center">
-                <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                <div className="mx-auto w-12 h-12  rounded-full flex items-center justify-center mb-4">
                   <Trash2 size={24} className="text-red-600" />
                 </div>
 
-                <h2 className="text-xl font-bold text-gray-900 mb-2">
+                <h2 className="text-xl font-bold text-[#bb0707] mb-2">
                   Delete Lead?
                 </h2>
-                <p className="text-gray-600 mb-6">
+                <p className="text-[#ffffff51] mb-6">
                   Are you sure you want to delete{" "}
                   <span className="font-semibold">{selectedLead.name}</span>?
                   This action cannot be undone.
@@ -1416,14 +1416,14 @@ export default function LeadsContent() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setShowDeleteModal(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition"
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-white font-medium hover:bg-[#0000006f] transition"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleConfirmDelete}
                     disabled={loading}
-                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition disabled:opacity-50"
+                    className="flex-1 px-4 py-2 bg-background border  text-[red] rounded-lg font-medium hover:bg-red-700 hover:text-white transition disabled:opacity-50"
                   >
                     {loading ? "Deleting..." : "Delete"}
                   </button>
@@ -1440,15 +1440,15 @@ export default function LeadsContent() {
 // Helper Components
 function StatCard({ title, value, icon: Icon, color }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-background border border-[#ffffff2d] rounded-xl p-3 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-gray-600 text-sm font-medium">{title}</p>
-          <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
+          <p className="text-[white] text-sm font-medium">{title}</p>
+          <p className="text-3xl font-bold text-[white] mt-2">{value}</p>
         </div>
-        <div className={`bg-gradient-to-br ${color} p-3 rounded-xl text-white`}>
+        {/* <div className={`bg-gradient-to-br ${color} p-3 rounded-xl text-white`}>
           <Icon size={24} />
-        </div>
+        </div> */}
       </div>
     </div>
   );
@@ -1457,8 +1457,8 @@ function StatCard({ title, value, icon: Icon, color }) {
 function DetailItem({ label, value }) {
   return (
     <div>
-      <p className="text-sm text-gray-600 font-medium">{label}</p>
-      <p className="text-gray-900 font-semibold mt-1">{value || "-"}</p>
+      <p className="text-sm text-[#ffffff63] font-medium">{label}</p>
+      <p className="text-white font-semibold mt-1">{value || "-"}</p>
     </div>
   );
 }

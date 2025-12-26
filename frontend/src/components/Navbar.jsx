@@ -223,25 +223,25 @@ export function Navbar({ sidebarOpen, setSidebarOpen }) {
   }, [isDragging, dragOffset]);
 
   return (
-    <header className="sticky top-0 z-10   bg-[#131212] border-b border-gray-200 px-4 md:px-16 py-3 flex items-center justify-between ">
+    <header className="sticky top-0 z-10   bg-[#161B22] border-b border-gray-200 px-4 md:px-16 py-3 flex items-center justify-between ">
       {/* Left Section */}
       <div className="hidden md:flex flex-col items-center py-2 rounded-lg">
-        <div className="text-lg font-semibold text-[#D2F961]">
+        <div className="text-lg font-semibold text-[#ffffff]">
           {mounted ? formatTime(currentTime) : "--:--:--"}
         </div>
-        <div className="text-xs text-gray-600">
+        <div className="text-xs text-white">
           {mounted ? formatDate(currentTime) : ""}
         </div>
       </div>
 
       {sidebarOpen ? (
         <SidebarTrigger
-          className="md:hidden text-[#D2F961]"
+          className="md:hidden text-[#ffffff]"
           onClick={() => setSidebarOpen(false)}
         />
       ) : (
         <SidebarTrigger
-          className="md:hidden text-[#D2F961]"
+          className="md:hidden text-[#ffffff]"
           onClick={() => setSidebarOpen(true)}
         />
       )}
@@ -255,10 +255,10 @@ export function Navbar({ sidebarOpen, setSidebarOpen }) {
         <Button
           variant="ghost"
           size="icon"
-          className="relative hover:bg-gray-100 text-[#D2F961]"
+          className="relative hover:bg-gray-100 text-[#ffffff]"
           onClick={() => setCalendarOpen(!calendarOpen)}
         >
-          <Calendar size={20} className="text-[#D2F961]" />
+          <Calendar size={20} className="text-[#ffffff]" />
         </Button>
 
         <Button
@@ -267,7 +267,7 @@ export function Navbar({ sidebarOpen, setSidebarOpen }) {
           className="relative hover:bg-gray-100"
           onClick={() => setCalculatorOpen(!calculatorOpen)}
         >
-          <Calculator size={20} className="text-[#D2F961]" />
+          <Calculator size={20} className="text-[#ffffff]" />
         </Button>
 
         <Button
@@ -276,7 +276,7 @@ export function Navbar({ sidebarOpen, setSidebarOpen }) {
           className="relative hover:bg-gray-100"
           onClick={handleClick}
         >
-          <Bell size={20} className="text-[#D2F961] " />
+          <Bell size={20} className="text-[#ffffff] " />
           <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
         </Button>
 

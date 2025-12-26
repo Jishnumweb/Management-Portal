@@ -150,11 +150,11 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
           return (
             <div key={item.title}>
               <button
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors group
+                className={`w-full flex items-center justify-between px-4 py-2 rounded-sm transition-colors group
                   ${
                     isActive
-                      ? "bg-[#D2F961] "
-                      : "text-[#D2F961] hover:bg-[#d3f961c5]"
+                      ? "bg-[#161B22] text-white border-l-2 border-[#0056a2]"
+                      : "text-white hover:bg-[#161B22]"
                   }`}
                 onClick={() => hasSubItems && toggleMenu(item.title)}
               >
@@ -164,9 +164,7 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
                   onClick={() => sidebarOpen(false)}
                 >
                   <IconComponent
-                    className={`w-5 h-5 ${
-                      isActive ? "" : "text-[#D2F961] group-hover:text-gray-800"
-                    }`}
+                    className={`w-5 h-5 ${isActive ? "" : "text-white "}`}
                   />
                   <span className="text-sm">{item.title}</span>
                 </Link>
@@ -190,8 +188,8 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
                       className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors
                         ${
                           pathname === sub.link
-                            ? "bg-[#00afef63]"
-                            : "text-gray-600 hover:bg-gray-50"
+                            ? "bg-[#161B22] text-white border-l-2 border-[#0056a2]"
+                            : "text-white hover:bg-[#161B22]"
                         }`}
                     >
                       <sub.icon className="w-3 h-3 text-gray-400" />
@@ -209,7 +207,7 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
 
   return (
     <aside
-      className={`fixed left-0 top-0 w-80 h-screen overflow-y-auto z-10   bg-[#000000] border-r  flex flex-col shadow-sm  transform transition-transform duration-300 ${
+      className={`fixed left-0 top-0 w-80 h-screen overflow-y-auto z-10   bg-[#0D1117] border-r rounded-lg flex flex-col shadow-sm  transform transition-transform duration-300 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       } md:translate-x-0  md:w-80`}
     >
@@ -219,7 +217,7 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
 
       <div className="md:hidden flex justify-end p-3">
         <button onClick={() => setSidebarOpen(false)}>
-          <X className="w-6 h-6 text-[#D2F961]" />
+          <X className="w-6 h-6 text-white" />
         </button>
       </div>
 
@@ -228,14 +226,14 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
       {/* <Section title="Human Resources (HR)" items={hr} /> */}
       <Section title="Finance & Accounting" items={finance} />
 
-      <div className="px-4 py-4 border-t  bg-[#090909]">
+      <div className="px-4 py-4 border-t  bg-[#0D1117]">
         <button className="w-full flex i gap-3 p-3  rounded-lg">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#D2F961] to-[#D2F961] flex items-center justify-center text-black font-bold">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-white to-white flex items-center justify-center text-black font-bold">
             AD
           </div>
           <div className="flex flex-col items-start">
-            <p className="text-sm font-medium text-[#D2F961]">Admin</p>
-            <p className="text-xs text-[#D2F961]">admin@gmail.com</p>
+            <p className="text-sm font-medium text-white">Admin</p>
+            <p className="text-xs text-white">admin@gmail.com</p>
           </div>
         </button>
       </div>
