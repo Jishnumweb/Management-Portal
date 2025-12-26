@@ -136,7 +136,7 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
   ];
 
   const Section = ({ title, items }) => (
-    <div className="px-4 py-4 border-t border-gray-100">
+    <div className="px-4 py-4  ">
       <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
         {title}
       </h3>
@@ -153,18 +153,19 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-lg transition-colors group
                   ${
                     isActive
-                      ? "bg-[#00afef63] "
-                      : "text-gray-700 hover:bg-[#00afef31]"
+                      ? "bg-[#D2F961] "
+                      : "text-[#D2F961] hover:bg-[#d3f961c5]"
                   }`}
                 onClick={() => hasSubItems && toggleMenu(item.title)}
               >
                 <Link
                   href={item.link ?? "#"}
                   className="flex items-center gap-3 flex-1 text-left"
+                  onClick={() => sidebarOpen(false)}
                 >
                   <IconComponent
                     className={`w-5 h-5 ${
-                      isActive ? "" : "text-gray-500 group-hover:text-gray-800"
+                      isActive ? "" : "text-[#D2F961] group-hover:text-gray-800"
                     }`}
                   />
                   <span className="text-sm">{item.title}</span>
@@ -183,6 +184,7 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
                 <div className="ml-6 space-y-1 py-1">
                   {item.subItems.map((sub) => (
                     <Link
+                      onClick={() => sidebarOpen(false)}
                       href={sub.link}
                       key={sub.title}
                       className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors
@@ -207,17 +209,17 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
 
   return (
     <aside
-      className={`fixed left-0 top-0 w-80 h-screen overflow-y-auto   bg-white border-r border-gray-200 flex flex-col shadow-sm  transform transition-transform duration-300 ${
+      className={`fixed left-0 top-0 w-80 h-screen overflow-y-auto z-10   bg-[#000000] border-r  flex flex-col shadow-sm  transform transition-transform duration-300 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       } md:translate-x-0  md:w-80`}
     >
-      {/* <div className="flex items-center px-5 py-4 border-b">
-        <img src="/images/vydurya-logo.png" className="h-10" />
-      </div> */}
+      <div className="flex items-center px-5 py-4 ">
+        {/* <img src="/images/vydurya-logo.png" className="h-10" /> */}
+      </div>
 
       <div className="md:hidden flex justify-end p-3">
         <button onClick={() => setSidebarOpen(false)}>
-          <X className="w-6 h-6 text-gray-600" />
+          <X className="w-6 h-6 text-[#D2F961]" />
         </button>
       </div>
 
@@ -226,14 +228,14 @@ export function AdminSidebarTwo({ sidebarOpen, setSidebarOpen }) {
       {/* <Section title="Human Resources (HR)" items={hr} /> */}
       <Section title="Finance & Accounting" items={finance} />
 
-      <div className="px-4 py-4 border-t  bg-white">
-        <button className="w-full flex i gap-3 p-3 hover:bg-gray-50 rounded-lg">
-          <div className="w-10 h-10 rounded-full bg-[#00aeef] flex items-center justify-center text-white font-bold">
+      <div className="px-4 py-4 border-t  bg-[#090909]">
+        <button className="w-full flex i gap-3 p-3  rounded-lg">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#D2F961] to-[#D2F961] flex items-center justify-center text-black font-bold">
             AD
           </div>
           <div className="flex flex-col items-start">
-            <p className="text-sm font-medium text-gray-900">Admin</p>
-            <p className="text-xs text-gray-500">admin@gmail.com</p>
+            <p className="text-sm font-medium text-[#D2F961]">Admin</p>
+            <p className="text-xs text-[#D2F961]">admin@gmail.com</p>
           </div>
         </button>
       </div>

@@ -14,10 +14,9 @@ import {
   Download,
   FileText,
   TrendingUp,
-  ArrowDown,
-  ArrowDownIcon,
-  ChevronDown,
-  ChevronUp,
+  ArrowLeft,
+  ArrowRight,
+  Filter,
 } from "lucide-react";
 import useAdminStore from "@/stores/useAdminStore";
 import { useRouter } from "next/navigation";
@@ -28,11 +27,11 @@ import autoTable from "jspdf-autotable";
 function SkeletonLoader() {
   return (
     <div className="space-y-4 animate-pulse">
-      <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+      <div className="h-8 bg-gray-200 rounded-lg w-3/4"></div>
+      <div className="h-4 bg-gray-200 rounded-lg w-1/2"></div>
       <div className="space-y-3">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-10 bg-gray-200 rounded"></div>
+          <div key={i} className="h-12 bg-gray-200 rounded-lg"></div>
         ))}
       </div>
     </div>
@@ -63,7 +62,7 @@ const statuses = [
   "On Hold",
 ];
 
-export default function LeadsPage() {
+export default function LeadsContent() {
   const [search, setSearch] = useState("");
   const [showAddSidebar, setShowAddSidebar] = useState(false);
   const [showViewModel, setShowViewModel] = useState(false);
@@ -77,6 +76,7 @@ export default function LeadsPage() {
   const [filterSource, setFilterSource] = useState("all");
   const [filterService, setFilterService] = useState("all");
   const [filterFollowUpDate, setFilterFollowUpDate] = useState("");
+  const [filterOpen, setFilterOpen] = useState(false);
 
   const router = useRouter();
 
@@ -95,7 +95,6 @@ export default function LeadsPage() {
   } = useAdminStore();
 
   const [total, setTotal] = useState(0);
-  const [seaOpen, setSeaOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -105,7 +104,7 @@ export default function LeadsPage() {
     lost: 0,
     onHold: 0,
   });
-  console.log(limit);
+
   const [selectedLead, setSelectedLead] = useState(null);
 
   const [newLead, setNewLead] = useState({
@@ -396,14 +395,34 @@ export default function LeadsPage() {
   const getStatusColor = (status) => {
     const s = (status || "").toLowerCase();
     const statusColors = {
-      draft: { bg: "bg-gray-100", text: "text-gray-700" },
-      new: { bg: "bg-blue-100", text: "text-blue-700" },
-      "in negotiation": { bg: "bg-yellow-100", text: "text-yellow-800" },
-      won: { bg: "bg-green-100", text: "text-green-700" },
-      loose: { bg: "bg-red-100", text: "text-red-700" },
-      canceled: { bg: "bg-gray-100", text: "text-gray-700" },
-      assigned: { bg: "bg-purple-100", text: "text-purple-700" },
-      "on hold": { bg: "bg-orange-100", text: "text-orange-700" },
+      draft: { bg: "bg-gray-100", text: "text-gray-700", badge: "bg-gray-500" },
+      new: { bg: "bg-blue-100", text: "text-blue-700", badge: "bg-blue-500" },
+      "in negotiation": {
+        bg: "bg-yellow-100",
+        text: "text-yellow-800",
+        badge: "bg-yellow-500",
+      },
+      won: {
+        bg: "bg-green-100",
+        text: "text-green-700",
+        badge: "bg-green-500",
+      },
+      loose: { bg: "bg-red-100", text: "text-red-700", badge: "bg-red-500" },
+      canceled: {
+        bg: "bg-gray-100",
+        text: "text-gray-700",
+        badge: "bg-gray-500",
+      },
+      assigned: {
+        bg: "bg-purple-100",
+        text: "text-purple-700",
+        badge: "bg-purple-500",
+      },
+      "on hold": {
+        bg: "bg-orange-100",
+        text: "text-orange-700",
+        badge: "bg-orange-500",
+      },
     };
     return statusColors[s] || statusColors["new"];
   };
@@ -488,479 +507,597 @@ export default function LeadsPage() {
 
   return (
     <>
-      <div className="lg:p-1 p-3 space-y-2">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-semibold text-gray-900">Leads</h1>
-            <p className="text-gray-500 text-sm">
-              Manage and track all your sales leads
-            </p>
-          </div>
+      <div className="min-h-screen ">
+        <div className="max-w-7xl mx-auto lg:p-0 p-3">
+          {/* Header Section */}
+          <div className="mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+              <div>
+                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">
+                  Leads
+                </h1>
+                <p className="text-gray-600 mt-2">
+                  Manage and track all your sales leads
+                </p>
+              </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 items-end sm:items-center justify-between lg:justify-end">
-            {/* Export Actions */}
-            <div className="flex gap-2">
-              <button
-                onClick={exportToExcel}
-                className="flex items-center gap-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition"
-              >
-                <Download size={16} />
-                Excel
-              </button>
-
-              <button
-                onClick={exportToPDF}
-                className="flex items-center gap-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition"
-              >
-                <FileText size={16} />
-                PDF
-              </button>
-
-              {/* Primary Action */}
               <button
                 onClick={() => setShowAddSidebar(true)}
-                className="flex items-center gap-2 bg-[#00aeef] hover:bg-[#0093ca] text-white px-5 py-2.5 rounded-lg text-sm font-semibold shadow-sm transition"
+                className="flex items-center justify-center gap-2 bg-gradient-to-r from-[#00aeef] to-[#0093ca] hover:shadow-lg text-white px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 transform hover:scale-105"
               >
                 <PlusCircle size={18} />
                 Add Lead
               </button>
             </div>
-          </div>
-        </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-500 text-sm font-medium">Total Leads</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">
-                  {allLeadsCount.total}
-                </p>
-              </div>
-              <TrendingUp size={32} className="text-[#00aeef]" />
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard
+                title="Total Leads"
+                value={allLeadsCount.total}
+                icon={TrendingUp}
+                color="from-blue-500 to-blue-600"
+              />
+              <StatCard
+                title="Won"
+                value={allLeadsCount.won}
+                icon={TrendingUp}
+                color="from-green-500 to-green-600"
+              />
+              <StatCard
+                title="Lost"
+                value={allLeadsCount.lost}
+                icon={TrendingUp}
+                color="from-red-500 to-red-600"
+              />
+              <StatCard
+                title="On Hold"
+                value={allLeadsCount.onHold}
+                icon={Calendar}
+                color="from-orange-500 to-orange-600"
+              />
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-500 text-sm font-medium">Won</p>
-                <p className="text-2xl font-bold text-green-600 mt-1">
-                  {allLeadsCount.won}
-                </p>
-              </div>
-              <div className="bg-green-100 p-3 rounded-lg">
-                <TrendingUp size={24} className="text-green-600" />
-              </div>
+          {/* Search & Filter Bar */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+            <div className="flex items-center gap-2 mb-4 sm:mb-0">
+              <Search className="text-gray-400" size={18} />
+              <input
+                type="text"
+                placeholder="Search by name, company, email..."
+                className="flex-1 bg-transparent border-0 focus:outline-none text-sm"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+              />
+              <button
+                onClick={() => setFilterOpen(!filterOpen)}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-600 transition"
+              >
+                <Filter size={18} />
+                <span className="hidden sm:inline text-sm font-medium">
+                  Filters
+                </span>
+              </button>
             </div>
+
+            {/* Advanced Filters */}
+            {filterOpen && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-4 border-t border-gray-200">
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                >
+                  <option value="all">All Status</option>
+                  {statuses.map((status) => (
+                    <option key={status} value={status}>
+                      {capitalizeWords(status)}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={filterSource}
+                  onChange={(e) => setFilterSource(e.target.value)}
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                >
+                  <option value="all">All Sources</option>
+                  {sources.map((source) => (
+                    <option key={source} value={source}>
+                      {source}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={filterService}
+                  onChange={(e) => setFilterService(e.target.value)}
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                >
+                  <option value="all">All Services</option>
+                  {services.map((service) => (
+                    <option key={service._id} value={service.name}>
+                      {service.name}
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="date"
+                  value={filterFollowUpDate}
+                  onChange={(e) => setFilterFollowUpDate(e.target.value)}
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                />
+
+                <button
+                  onClick={() => {
+                    setFilterStatus("all");
+                    setFilterSource("all");
+                    setFilterService("all");
+                    setFilterFollowUpDate("");
+                  }}
+                  className="col-span-1 sm:col-span-2 lg:col-span-4 text-sm text-[#00aeef] hover:text-[#0093ca] font-medium px-3 py-2 rounded-lg hover:bg-blue-50 transition"
+                >
+                  Clear All Filters
+                </button>
+              </div>
+            )}
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-500 text-sm font-medium">Lost</p>
-                <p className="text-2xl font-bold text-red-600 mt-1">
-                  {allLeadsCount.lost}
-                </p>
-              </div>
-              <div className="bg-red-100 p-3 rounded-lg">
-                <TrendingUp size={24} className="text-red-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-500 text-sm font-medium">On Hold</p>
-                <p className="text-2xl font-bold text-orange-600 mt-1">
-                  {allLeadsCount.onHold}
-                </p>
-              </div>
-              <div className="bg-orange-100 p-3 rounded-lg">
-                <Calendar size={24} className="text-orange-600" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {seaOpen ? (
-          <button onClick={() => setSeaOpen(false)}>
-            <ChevronUp />
-          </button>
-        ) : (
-          <button onClick={() => setSeaOpen(true)}>
-            <ChevronDown />
-          </button>
-        )}
-
-        {seaOpen && (
-          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex flex-col sm:flex-row items-center gap-3">
-            <Search className="text-gray-500" size={18} />
-            <input
-              type="text"
-              placeholder="Search by name, company, email, phone..."
-              className="flex-1 border-0 focus:outline-none text-sm w-full"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-            />
-
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="border border-gray-300 w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef] flex-1 min-w-[120px]"
+          {/* Export Buttons */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            <button
+              onClick={exportToExcel}
+              className="flex items-center gap-2 border-2 border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition"
             >
-              <option value="all">All Status</option>
-              {statuses.map((status) => (
-                <option key={status} value={status} className="">
-                  {capitalizeWords(status)}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={filterSource}
-              onChange={(e) => setFilterSource(e.target.value)}
-              className="border w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef] flex-1 min-w-[120px]"
-            >
-              <option value="all">All Sources</option>
-              {sources.map((source) => (
-                <option key={source} value={source}>
-                  {source}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={filterService}
-              onChange={(e) => setFilterService(e.target.value)}
-              className="border w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef] flex-1 min-w-[120px]"
-            >
-              <option value="all">All Services</option>
-              {services.map((service) => (
-                <option key={service._id} value={service.name}>
-                  {service.name}
-                </option>
-              ))}
-            </select>
-
-            <input
-              type="date"
-              value={filterFollowUpDate}
-              onChange={(e) => setFilterFollowUpDate(e.target.value)}
-              className="border w-full border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef] flex-1 min-w-[130px]"
-            />
+              <Download size={16} />
+              <span className="hidden sm:inline">Export Excel</span>
+              <span className="sm:hidden">Excel</span>
+            </button>
 
             <button
-              onClick={() => {
-                setFilterStatus("all");
-                setFilterSource("all");
-                setFilterService("all");
-                setFilterFollowUpDate("");
-              }}
-              className="text-sm text-[#00aeef] hover:text-[#0093ca] font-medium px-3 py-2 rounded-lg hover:bg-blue-50 transition whitespace-nowrap flex-shrink-0"
+              onClick={exportToPDF}
+              className="flex items-center gap-2 border-2 border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition"
             >
-              Clear
+              <FileText size={16} />
+              <span className="hidden sm:inline">Export PDF</span>
+              <span className="sm:hidden">PDF</span>
             </button>
           </div>
-        )}
-        {/* Leads Table */}
-        <div className="overflow-x-auto mt-5 bg-white border border-gray-200 rounded-xl shadow-sm">
-          <table className="w-full text-sm text-left text-gray-700">
-            <thead className="bg-gray-50 text-gray-600 uppercase text-xs font-semibold">
-              <tr>
-                <th className="px-6 py-3">#</th>
-                <th className="px-6 py-3">Lead Name</th>
-                <th className="px-6 py-3">Company</th>
-                <th className="px-6 py-3">Contact</th>
-                <th className="px-6 py-3">Country</th>
-                <th className="px-6 py-3">Product / Service</th>
-                <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3">Source</th>
-                <th className="px-6 py-3">Follow-up</th>
-                <th className="px-6 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredLeads && filteredLeads.length > 0 ? (
-                filteredLeads.map((lead, index) => (
-                  <tr
-                    key={lead._id}
-                    className="border-t hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="px-6 py-4 text-gray-600 font-medium">
-                      {startLeadNumber + index}
-                    </td>
-                    <td
-                      className="px-6 py-4 flex items-center gap-3 cursor-pointer"
-                      onClick={() => handleViewClick(lead)}
+
+          {/* Leads Table */}
+          {loading ? (
+            <SkeletonLoader />
+          ) : (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              {/* Desktop Table */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                    <tr>
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                        #
+                      </th>
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                        Lead Name
+                      </th>
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                        Company
+                      </th>
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                        Email
+                      </th>
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                        Status
+                      </th>
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                        Service
+                      </th>
+                      <th className="px-6 py-4 text-left font-semibold text-gray-700">
+                        Follow-up
+                      </th>
+                      <th className="px-6 py-4 text-center font-semibold text-gray-700">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {filteredLeads.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan="8"
+                          className="px-6 py-12 text-center text-gray-500"
+                        >
+                          No leads found
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredLeads.map((lead, idx) => (
+                        <tr
+                          key={lead._id}
+                          className="hover:bg-gray-50 transition-colors"
+                        >
+                          <td className="px-6 py-4 text-gray-600">
+                            {startLeadNumber + idx}
+                          </td>
+                          <td className="px-6 py-4">
+                            <p className="font-semibold text-gray-900">
+                              {lead.name}
+                            </p>
+                          </td>
+                          <td className="px-6 py-4 text-gray-600">
+                            {truncate(lead.company, 20)}
+                          </td>
+                          <td className="px-6 py-4">
+                            <a
+                              href={`mailto:${lead.email}`}
+                              className="text-[#00aeef] hover:underline flex items-center gap-1"
+                            >
+                              <Mail size={14} />
+                              {truncate(lead.email, 18)}
+                            </a>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span
+                              className={`${
+                                getStatusColor(lead.status).badge
+                              } text-white px-3 py-1 rounded-full text-xs font-semibold`}
+                            >
+                              {capitalizeWords(lead.status)}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-gray-600">
+                            {truncate(lead.service, 15)}
+                          </td>
+                          <td className="px-6 py-4 text-gray-600 text-sm">
+                            {formatDate(lead.followUpDate)}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                onClick={() => handleViewClick(lead)}
+                                className="p-2 hover:bg-blue-50 rounded-lg text-gray-600 hover:text-[#00aeef] transition"
+                                title="View"
+                              >
+                                <Eye size={16} />
+                              </button>
+                              <button
+                                onClick={() => handleEditClick(lead)}
+                                className="p-2 hover:bg-yellow-50 rounded-lg text-gray-600 hover:text-yellow-600 transition"
+                                title="Edit"
+                              >
+                                <Edit3 size={16} />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteClick(lead)}
+                                className="p-2 hover:bg-red-50 rounded-lg text-gray-600 hover:text-red-600 transition"
+                                title="Delete"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden divide-y divide-gray-200">
+                {filteredLeads.length === 0 ? (
+                  <div className="px-4 py-12 text-center text-gray-500">
+                    No leads found
+                  </div>
+                ) : (
+                  filteredLeads.map((lead, idx) => (
+                    <div
+                      key={lead._id}
+                      className="p-4 hover:bg-gray-50 transition-colors"
                     >
-                      <div>
-                        <p className="font-medium text-gray-900">{lead.name}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-gray-700">{lead.company}</td>
-                    <td className="px-6 py-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 text-xs text-gray-600">
-                          <Mail size={14} /> {lead.email || "-"}
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h3 className="font-semibold text-gray-900">
+                            {lead.name}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            {lead.company}
+                          </p>
                         </div>
-                        <div className="flex items-center gap-2 text-xs text-gray-600">
-                          <Phone size={14} /> {lead.phone || "-"}
-                        </div>
+                        <span
+                          className={`${
+                            getStatusColor(lead.status).badge
+                          } text-white px-2 py-1 rounded-full text-xs font-semibold`}
+                        >
+                          {capitalizeWords(lead.status)}
+                        </span>
                       </div>
-                    </td>
-                    <td className="px-6 py-4 text-gray-700">
-                      {lead.country || "-"}
-                    </td>
-                    <td className="px-6 py-4 text-gray-700">
-                      <div className="text-xs">
-                        <div>{lead.product || "-"}</div>
-                        <div className="text-gray-500">
-                          {lead.service || "-"}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                          getStatusColor(lead.status).bg
-                        } ${getStatusColor(lead.status).text}`}
-                      >
-                        {capitalizeWords(lead.status)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-gray-700">{lead.source}</td>
-                    <td className="px-6 py-4 text-gray-700">
-                      {formatDate(lead.followUpDate)}
-                    </td>
-                    <td className="px-6 py-4 text-right flex justify-end gap-2">
-                      <button
-                        className="flex items-center gap-1 px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition"
-                        onClick={() => handleEditClick(lead)}
-                      >
-                        <Edit3 size={14} />
-                      </button>
-                      <button
-                        className="flex items-center gap-1 px-3 py-1 text-sm bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition"
-                        onClick={() => handleDeleteClick(lead)}
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                      <button
-                        className="flex items-center gap-1 px-3 py-1 text-sm bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition"
-                        onClick={() => handleViewClick(lead)}
-                      >
-                        <Eye size={14} />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={10} className="text-center py-10 text-gray-500">
-                    {loading ? "Loading..." : "No leads found"}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
 
-        {totalPages > 1 && (
-          <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-              <div className="text-sm text-gray-600">
-                <span className="font-medium">
-                  Showing {startLeadNumber}-{endLeadNumber} of {total} leads
-                </span>
+                      <div className="space-y-2 mb-4 text-sm">
+                        <p className="flex items-center gap-2 text-gray-600">
+                          <Mail size={14} className="text-gray-400" />
+                          {truncate(lead.email, 25)}
+                        </p>
+                        {lead.phone && (
+                          <p className="flex items-center gap-2 text-gray-600">
+                            <Phone size={14} className="text-gray-400" />
+                            {lead.phone}
+                          </p>
+                        )}
+                        {lead.service && (
+                          <p className="text-gray-600">
+                            <span className="font-medium">Service:</span>{" "}
+                            {lead.service}
+                          </p>
+                        )}
+                        {lead.followUpDate && (
+                          <p className="flex items-center gap-2 text-gray-600">
+                            <Calendar size={14} className="text-gray-400" />
+                            {formatDate(lead.followUpDate)}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleViewClick(lead)}
+                          className="flex-1 px-3 py-2 text-xs font-medium bg-blue-50 text-[#00aeef] rounded-lg hover:bg-blue-100 transition"
+                        >
+                          View
+                        </button>
+                        <button
+                          onClick={() => handleEditClick(lead)}
+                          className="flex-1 px-3 py-2 text-xs font-medium bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClick(lead)}
+                          className="flex-1 px-3 py-2 text-xs font-medium bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
 
-              {/* Center: Pagination buttons */}
-              <div className="flex justify-center items-center gap-2">
-                <button
-                  className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                  onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                  disabled={page === 1}
-                >
-                  Previous
-                </button>
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="px-4 sm:px-6 py-4 border-t border-gray-200 flex items-center justify-between flex-wrap gap-3">
+                  <p className="text-sm text-gray-600">
+                    Showing{" "}
+                    <span className="font-semibold">{startLeadNumber}</span> to{" "}
+                    <span className="font-semibold">{endLeadNumber}</span> of{" "}
+                    <span className="font-semibold">{total}</span> leads
+                  </p>
 
-                <div className="flex items-center gap-2">
-                  {[...Array(totalPages)].map((_, i) => {
-                    const pageNum = i + 1;
-                    const isCurrentPage = pageNum === page;
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => setPage(pageNum)}
-                        className={`w-10 h-10 rounded-lg border transition ${
-                          isCurrentPage
-                            ? "bg-[#00aeef] text-white border-[#00aeef] font-semibold"
-                            : "border-gray-300 hover:bg-gray-50"
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setPage(Math.max(1, page - 1))}
+                      disabled={page === 1}
+                      className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
+                    >
+                      <ArrowLeft size={16} />
+                    </button>
+
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                        (p) => (
+                          <button
+                            key={p}
+                            onClick={() => setPage(p)}
+                            className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
+                              page === p
+                                ? "bg-[#00aeef] text-white"
+                                : "border border-gray-300 hover:bg-gray-50"
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        )
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => setPage(Math.min(totalPages, page + 1))}
+                      disabled={page === totalPages}
+                      className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition"
+                    >
+                      <ArrowRight size={16} />
+                    </button>
+                  </div>
+
+                  <select
+                    value={limit}
+                    onChange={(e) => {
+                      setLimit(Number.parseInt(e.target.value));
+                      setPage(1);
+                    }}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                  >
+                    <option value="5">5 per page</option>
+                    <option value="10">10 per page</option>
+                    <option value="25">25 per page</option>
+                    <option value="50">50 per page</option>
+                  </select>
                 </div>
-
-                <button
-                  className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                  onClick={() =>
-                    setPage((prev) => Math.min(prev + 1, totalPages))
-                  }
-                  disabled={page === totalPages}
-                >
-                  Next
-                </button>
-              </div>
-
-              {/* Right side: Current page info */}
-              <div className="text-sm text-gray-600 text-right">
-                <span className="font-medium">
-                  Page {page} of {totalPages}
-                </span>
-              </div>
+              )}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
-      {/* Add Lead Sidebar */}
-      {showAddSidebar && (
-        <div className="fixed inset-0 z-50 flex justify-center items-center">
+      {/* Add/Edit Sidebar */}
+      {(showAddSidebar || showEditSidebar) && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
           <div
-            className="fixed inset-0 bg-black/40"
-            onClick={() => setShowAddSidebar(false)}
+            className="fixed inset-0 bg-black/50 bg-opacity-50"
+            onClick={() => {
+              setShowAddSidebar(false);
+              setShowEditSidebar(false);
+            }}
           />
-          <div className="lg:h-150 md:h-100 md:w-300 h-130 w-full md:p-5 p-3 m-4 overflow-hidden  justify-center items-center z-30   bg-white shadow-2xl overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold text-gray-900">
-                  Add New Lead
+
+          <div className="relative min-h-screen flex items-end sm:items-center justify-center p-4">
+            <div className="relative bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md shadow-2xl">
+              <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                <h2 className="text-xl font-bold text-gray-900">
+                  {showAddSidebar ? "Add New Lead" : "Edit Lead"}
                 </h2>
                 <button
-                  onClick={() => setShowAddSidebar(false)}
-                  className="text-gray-500 hover:text-gray-800"
+                  onClick={() => {
+                    setShowAddSidebar(false);
+                    setShowEditSidebar(false);
+                  }}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition"
                 >
-                  <X size={24} />
+                  <X size={20} />
                 </button>
               </div>
 
-              <div className="grid lg:grid-cols-3 gap-4">
+              <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Lead Name <span className="text-red-600">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Name *
                   </label>
                   <input
                     type="text"
-                    placeholder="Enter lead name"
-                    className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                    value={newLead.name}
-                    onChange={(e) =>
-                      setNewLead({ ...newLead, name: e.target.value })
-                    }
+                    value={showAddSidebar ? newLead.name : editLeadData.name}
+                    onChange={(e) => {
+                      if (showAddSidebar) {
+                        setNewLead({ ...newLead, name: e.target.value });
+                      } else {
+                        setEditLeadData({
+                          ...editLeadData,
+                          name: e.target.value,
+                        });
+                      }
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    placeholder="Lead name"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email <span className="text-red-600">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email *
                   </label>
                   <input
                     type="email"
-                    placeholder="Enter email"
-                    className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                    value={newLead.email}
-                    onChange={(e) =>
-                      setNewLead({ ...newLead, email: e.target.value })
-                    }
+                    value={showAddSidebar ? newLead.email : editLeadData.email}
+                    onChange={(e) => {
+                      if (showAddSidebar) {
+                        setNewLead({ ...newLead, email: e.target.value });
+                      } else {
+                        setEditLeadData({
+                          ...editLeadData,
+                          email: e.target.value,
+                        });
+                      }
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    placeholder="email@example.com"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Company
                   </label>
                   <input
                     type="text"
-                    placeholder="Enter company"
-                    className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                    value={newLead.company}
-                    onChange={(e) =>
-                      setNewLead({ ...newLead, company: e.target.value })
+                    value={
+                      showAddSidebar ? newLead.company : editLeadData.company
                     }
+                    onChange={(e) => {
+                      if (showAddSidebar) {
+                        setNewLead({ ...newLead, company: e.target.value });
+                      } else {
+                        setEditLeadData({
+                          ...editLeadData,
+                          company: e.target.value,
+                        });
+                      }
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    placeholder="Company name"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Phone
                   </label>
                   <input
                     type="tel"
-                    placeholder="Enter phone"
-                    className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                    value={newLead.phone}
-                    onChange={(e) =>
-                      setNewLead({ ...newLead, phone: e.target.value })
-                    }
+                    value={showAddSidebar ? newLead.phone : editLeadData.phone}
+                    onChange={(e) => {
+                      if (showAddSidebar) {
+                        setNewLead({ ...newLead, phone: e.target.value });
+                      } else {
+                        setEditLeadData({
+                          ...editLeadData,
+                          phone: e.target.value,
+                        });
+                      }
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    placeholder="Phone number"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Country
                   </label>
                   <input
                     type="text"
-                    placeholder="Enter country"
-                    className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                    value={newLead.country}
-                    onChange={(e) =>
-                      setNewLead({ ...newLead, country: e.target.value })
+                    value={
+                      showAddSidebar ? newLead.country : editLeadData.country
                     }
+                    onChange={(e) => {
+                      if (showAddSidebar) {
+                        setNewLead({ ...newLead, country: e.target.value });
+                      } else {
+                        setEditLeadData({
+                          ...editLeadData,
+                          country: e.target.value,
+                        });
+                      }
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    placeholder="Country"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Product
-                  </label>
-                  <select
-                    value={newLead.product}
-                    onChange={(e) =>
-                      setNewLead({ ...newLead, product: e.target.value })
-                    }
-                    className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                  >
-                    <option value="">Select Product</option>
-                    {products.map((product) => (
-                      <option key={product._id} value={product.name}>
-                        {product.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Service
                   </label>
                   <select
-                    value={newLead.service}
-                    onChange={(e) =>
-                      setNewLead({ ...newLead, service: e.target.value })
+                    value={
+                      showAddSidebar ? newLead.service : editLeadData.service
                     }
-                    className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    onChange={(e) => {
+                      if (showAddSidebar) {
+                        setNewLead({ ...newLead, service: e.target.value });
+                      } else {
+                        setEditLeadData({
+                          ...editLeadData,
+                          service: e.target.value,
+                        });
+                      }
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
                   >
-                    <option value="">Select Service</option>
+                    <option value="">Select a service</option>
                     {services.map((service) => (
                       <option key={service._id} value={service.name}>
                         {service.name}
@@ -970,57 +1107,116 @@ export default function LeadsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Source
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Product
                   </label>
                   <select
-                    value={newLead.source}
-                    onChange={(e) =>
-                      setNewLead({ ...newLead, source: e.target.value })
+                    value={
+                      showAddSidebar ? newLead.product : editLeadData.product
                     }
-                    className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    onChange={(e) => {
+                      if (showAddSidebar) {
+                        setNewLead({ ...newLead, product: e.target.value });
+                      } else {
+                        setEditLeadData({
+                          ...editLeadData,
+                          product: e.target.value,
+                        });
+                      }
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
                   >
-                    <option value="">Select Source</option>
-                    {sources.map((src) => (
-                      <option key={src} value={src}>
-                        {src}
+                    <option value="">Select a product</option>
+                    {products.map((product) => (
+                      <option key={product._id} value={product.name}>
+                        {product.name}
                       </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Status
                   </label>
                   <select
-                    value={newLead.status}
-                    onChange={(e) =>
-                      setNewLead({ ...newLead, status: e.target.value })
+                    value={
+                      showAddSidebar ? newLead.status : editLeadData.status
                     }
-                    className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    onChange={(e) => {
+                      if (showAddSidebar) {
+                        setNewLead({ ...newLead, status: e.target.value });
+                      } else {
+                        setEditLeadData({
+                          ...editLeadData,
+                          status: e.target.value,
+                        });
+                      }
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
                   >
-                    <option value="">Select Status</option>
                     {statuses.map((status) => (
                       <option key={status} value={status}>
-                        {status}
+                        {capitalizeWords(status)}
                       </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Source
+                  </label>
+                  <select
+                    value={
+                      showAddSidebar ? newLead.source : editLeadData.source
+                    }
+                    onChange={(e) => {
+                      if (showAddSidebar) {
+                        setNewLead({ ...newLead, source: e.target.value });
+                      } else {
+                        setEditLeadData({
+                          ...editLeadData,
+                          source: e.target.value,
+                        });
+                      }
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                  >
+                    {sources.map((source) => (
+                      <option key={source} value={source}>
+                        {source}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Assigned To
                   </label>
                   <select
-                    value={newLead.assignedTo}
-                    onChange={(e) =>
-                      setNewLead({ ...newLead, assignedTo: e.target.value })
+                    value={
+                      showAddSidebar
+                        ? newLead.assignedTo || ""
+                        : editLeadData.assignedTo || ""
                     }
-                    className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+                    onChange={(e) => {
+                      if (showAddSidebar) {
+                        setNewLead({
+                          ...newLead,
+                          assignedTo: e.target.value || undefined,
+                        });
+                      } else {
+                        setEditLeadData({
+                          ...editLeadData,
+                          assignedTo: e.target.value || undefined,
+                        });
+                      }
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
                   >
-                    <option value="">Select Admin</option>
+                    <option value="">Unassigned</option>
                     {admins.map((admin) => (
                       <option key={admin._id} value={admin._id}>
                         {admin.email}
@@ -1030,537 +1226,239 @@ export default function LeadsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Follow-up Date
                   </label>
                   <input
                     type="date"
-                    placeholder="Follow-up Date"
-                    className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                    value={newLead.followUpDate}
-                    onChange={(e) =>
-                      setNewLead({ ...newLead, followUpDate: e.target.value })
+                    value={
+                      showAddSidebar
+                        ? newLead.followUpDate
+                        : editLeadData.followUpDate
                     }
+                    onChange={(e) => {
+                      if (showAddSidebar) {
+                        setNewLead({
+                          ...newLead,
+                          followUpDate: e.target.value,
+                        });
+                      } else {
+                        setEditLeadData({
+                          ...editLeadData,
+                          followUpDate: e.target.value,
+                        });
+                      }
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Notes
                   </label>
                   <textarea
-                    placeholder="Enter notes"
-                    className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                    value={newLead.notes}
-                    onChange={(e) =>
-                      setNewLead({ ...newLead, notes: e.target.value })
-                    }
+                    value={showAddSidebar ? newLead.notes : editLeadData.notes}
+                    onChange={(e) => {
+                      if (showAddSidebar) {
+                        setNewLead({ ...newLead, notes: e.target.value });
+                      } else {
+                        setEditLeadData({
+                          ...editLeadData,
+                          notes: e.target.value,
+                        });
+                      }
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#00aeef] resize-none"
+                    placeholder="Add notes..."
+                    rows="3"
                   />
                 </div>
               </div>
-              <div className="flex justify-end items-end ">
-                <button
-                  className=" bg-[#00aeef] md:px-10 px-4 hover:bg-[#0093ca] text-white py-2 rounded-lg font-medium transition mt-6"
-                  onClick={handleAddLead}
-                  disabled={creating}
-                >
-                  {creating ? "Saving..." : "Save Lead"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* View Lead Modal */}
-      {showViewModel && selectedLead && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-sm shadow-xl w-full max-w-4xl p-8 relative max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={() => {
-                setShowViewModel(false);
-                setSelectedLead(null);
-              }}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
-            >
-              <X size={24} />
-            </button>
-
-            <div className="mb-6">
-              <h2 className="text-3xl font-bold text-gray-900">
-                {selectedLead.name}
-              </h2>
-              <p className="text-gray-500 text-sm mt-1">
-                {selectedLead.company}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="border rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Mail size={16} className="text-[#00aeef]" />
-                    <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">
-                      Email
-                    </p>
-                  </div>
-                  <p className="text-gray-900 font-medium">
-                    {selectedLead.email || "-"}
-                  </p>
-                </div>
-
-                <div className="border rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Phone size={16} className="text-[#00aeef]" />
-                    <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">
-                      Phone
-                    </p>
-                  </div>
-                  <p className="text-gray-900 font-medium">
-                    {selectedLead.phone || "-"}
-                  </p>
-                </div>
-
-                <div className="border rounded-lg p-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">
-                    Country
-                  </p>
-                  <p className="text-gray-900 font-medium">
-                    {selectedLead.country || "-"}
-                  </p>
-                </div>
-
-                <div className="border rounded-lg p-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">
-                    Source
-                  </p>
-                  <p className="text-gray-900 font-medium">
-                    {selectedLead.source || "-"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="border rounded-lg p-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">
-                    Status
-                  </p>
-                  <span
-                    className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                      getStatusColor(selectedLead.status).bg
-                    } ${getStatusColor(selectedLead.status).text}`}
-                  >
-                    {capitalizeWords(selectedLead.status)}
-                  </span>
-                </div>
-
-                <div className="border rounded-lg p-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">
-                    Product
-                  </p>
-                  <p className="text-gray-900 font-medium">
-                    {selectedLead.product || "-"}
-                  </p>
-                </div>
-
-                <div className="border rounded-lg p-4">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">
-                    Service
-                  </p>
-                  <p className="text-gray-900 font-medium">
-                    {selectedLead.service || "-"}
-                  </p>
-                </div>
-
-                <div className="border rounded-lg p-4">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Calendar size={16} className="text-[#00aeef]" />
-                    <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">
-                      Follow-up Date
-                    </p>
-                  </div>
-                  <p className="text-gray-900 font-medium">
-                    {formatDate(selectedLead.followUpDate)}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 bg-blue-50 rounded-lg p-4 border border-blue-100">
-              <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">
-                Assigned To
-              </p>
-              <p className="text-gray-900 font-medium">
-                {selectedLead.assignedTo?.email}
-              </p>
-            </div>
-
-            {selectedLead.notes && (
-              <div className="mt-6  rounded-lg p-4 border border-yellow-100">
-                <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-2">
-                  Notes
-                </p>
-                <p className="text-gray-900 whitespace-pre-wrap">
-                  {selectedLead.notes}
-                </p>
-              </div>
-            )}
-
-            <div className="mt-6 flex items-center text-xs text-gray-400">
-              <Calendar size={14} className="mr-1" />
-              Added: {formatDate(selectedLead.createdAt)}
-            </div>
-
-            <div className="mt-8 flex gap-3">
-              <button
-                className="flex-1 bg-[#00aeef] hover:bg-[#0093ca] text-white py-2 rounded-lg font-medium transition"
-                onClick={() => {
-                  handleConvertToClient(selectedLead);
-                }}
-              >
-                Convert To Client
-              </button>
-              <button
-                className="flex-1 border border-gray-300 hover:bg-gray-50 py-2 rounded-lg font-medium transition"
-                onClick={() => {
-                  setShowViewModel(false);
-                  setSelectedLead(null);
-                }}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Lead Sidebar */}
-      {showEditSidebar && (
-        <div className="fixed inset-0 z-50 flex justify-center items-center">
-          <div
-            className="fixed inset-0 bg-black/40"
-            onClick={() => setShowEditSidebar(false)}
-          />
-          <div className="lg:h-150 md:h-100 md:w-300 h-130 w-full md:p-5 p-3 m-4 overflow-hidden  justify-center items-center z-30   bg-white shadow-2xl overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-semibold text-gray-900">
-                  Edit Lead
-                </h2>
+              <div className="flex gap-3 p-6 border-t border-gray-200 bg-gray-50">
                 <button
                   onClick={() => {
+                    setShowAddSidebar(false);
                     setShowEditSidebar(false);
-                    setSelectedLead(null);
                   }}
-                  className="text-gray-500 hover:text-gray-800"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition"
                 >
-                  <X size={24} />
+                  Cancel
+                </button>
+                <button
+                  onClick={showAddSidebar ? handleAddLead : handleSaveEdit}
+                  disabled={creating || editLoading || loading}
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-[#00aeef] to-[#0093ca] text-white rounded-lg font-medium hover:shadow-lg transition disabled:opacity-50"
+                >
+                  {creating || editLoading ? "Saving..." : "Save"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View Modal */}
+      {showViewModel && selectedLead && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div
+            className="fixed inset-0 bg-black/50 bg-opacity-50"
+            onClick={() => setShowViewModel(false)}
+          />
+
+          <div className="relative min-h-screen flex items-center justify-center p-4">
+            <div className="relative bg-white rounded-2xl w-full max-w-2xl shadow-2xl">
+              <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                <h2 className="text-xl font-bold text-gray-900">
+                  Lead Details
+                </h2>
+                <button
+                  onClick={() => setShowViewModel(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition"
+                >
+                  <X size={20} />
                 </button>
               </div>
 
-              {editLoading ? (
-                <SkeletonLoader />
-              ) : (
-                <div>
-                  <div className="grid lg:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Lead Name <span className="text-red-600">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Lead Name"
-                        className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                        value={editLeadData.name}
-                        onChange={(e) =>
-                          setEditLeadData({
-                            ...editLeadData,
-                            name: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Company
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Company"
-                        className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                        value={editLeadData.company}
-                        onChange={(e) =>
-                          setEditLeadData({
-                            ...editLeadData,
-                            company: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Email <span className="text-red-600">*</span>
-                      </label>
-                      <input
-                        type="email"
-                        placeholder="Email"
-                        className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                        value={editLeadData.email}
-                        onChange={(e) =>
-                          setEditLeadData({
-                            ...editLeadData,
-                            email: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Phone
-                      </label>
-                      <input
-                        type="tel"
-                        placeholder="Phone Number"
-                        className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                        value={editLeadData.phone}
-                        onChange={(e) =>
-                          setEditLeadData({
-                            ...editLeadData,
-                            phone: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Country
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="Country"
-                        className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                        value={editLeadData.country}
-                        onChange={(e) =>
-                          setEditLeadData({
-                            ...editLeadData,
-                            country: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Product
-                      </label>
-                      <select
-                        value={editLeadData.product}
-                        onChange={(e) =>
-                          setEditLeadData({
-                            ...editLeadData,
-                            product: e.target.value,
-                          })
-                        }
-                        className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
+              <div className="p-6 max-h-[70vh] overflow-y-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <DetailItem label="Name" value={selectedLead.name} />
+                  <DetailItem label="Email" value={selectedLead.email} />
+                  <DetailItem label="Company" value={selectedLead.company} />
+                  <DetailItem label="Phone" value={selectedLead.phone} />
+                  <DetailItem label="Country" value={selectedLead.country} />
+                  <DetailItem label="Service" value={selectedLead.service} />
+                  <DetailItem label="Product" value={selectedLead.product} />
+                  <DetailItem label="Source" value={selectedLead.source} />
+                  <DetailItem
+                    label="Status"
+                    value={
+                      <span
+                        className={`${
+                          getStatusColor(selectedLead.status).badge
+                        } text-white px-3 py-1 rounded-full text-sm font-semibold`}
                       >
-                        <option value="">Select a product</option>
-                        {products.map((product) => (
-                          <option key={product._id} value={product.name}>
-                            {product.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Service
-                      </label>
-                      <select
-                        value={editLeadData.service}
-                        onChange={(e) =>
-                          setEditLeadData({
-                            ...editLeadData,
-                            service: e.target.value,
-                          })
-                        }
-                        className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                      >
-                        <option value="">Select a service</option>
-                        {services.map((service) => (
-                          <option key={service._id} value={service.name}>
-                            {service.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Source
-                      </label>
-                      <select
-                        value={editLeadData.source}
-                        onChange={(e) =>
-                          setEditLeadData({
-                            ...editLeadData,
-                            source: e.target.value,
-                          })
-                        }
-                        className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                      >
-                        <option value="">Select Source</option>
-                        {sources.map((src) => (
-                          <option key={src} value={src}>
-                            {src}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Status
-                      </label>
-                      <select
-                        value={editLeadData.status}
-                        onChange={(e) =>
-                          setEditLeadData({
-                            ...editLeadData,
-                            status: e.target.value,
-                          })
-                        }
-                        className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                      >
-                        <option value="">Select Status</option>
-                        {statuses.map((status) => (
-                          <option key={status} value={status}>
-                            {status}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Assigned To
-                      </label>
-                      <select
-                        value={editLeadData.assignedTo}
-                        onChange={(e) =>
-                          setEditLeadData({
-                            ...editLeadData,
-                            assignedTo: e.target.value,
-                          })
-                        }
-                        className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                      >
-                        <option value="">Select Admin</option>
-                        {admins.map((admin) => (
-                          <option key={admin._id} value={admin._id}>
-                            {admin.email}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Follow-up Date
-                      </label>
-                      <input
-                        type="date"
-                        placeholder="Follow-up Date"
-                        className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                        value={editLeadData.followUpDate}
-                        onChange={(e) =>
-                          setEditLeadData({
-                            ...editLeadData,
-                            followUpDate: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Notes
-                      </label>
-                      <textarea
-                        placeholder="Notes"
-                        className="w-full border border-gray-300 rounded-sm  p-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#00aeef]"
-                        value={editLeadData.notes}
-                        onChange={(e) =>
-                          setEditLeadData({
-                            ...editLeadData,
-                            notes: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end">
-                    <div className="flex  gap-2 mt-6">
-                      <button
-                        className="flex-1 bg-[#00aeef] hover:bg-[#0093ca] text-white py-3 px-7 w-80 rounded-lg font-medium transition disabled:opacity-50"
-                        onClick={handleSaveEdit}
-                        disabled={loading}
-                      >
-                        {loading ? "Saving..." : "Save Changes"}
-                      </button>
-                      <button
-                        className="flex-1 border border-gray-300 py-2 px-5 rounded-lg hover:bg-gray-50 transition"
-                        onClick={() => {
-                          setShowEditSidebar(false);
-                          setSelectedLead(null);
-                        }}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
+                        {capitalizeWords(selectedLead.status)}
+                      </span>
+                    }
+                  />
+                  <DetailItem
+                    label="Follow-up Date"
+                    value={formatDate(selectedLead.followUpDate)}
+                  />
+                  <DetailItem
+                    label="Assigned To"
+                    value={selectedLead.assignedTo?.email || "-"}
+                  />
+                  <DetailItem
+                    label="Created At"
+                    value={formatDate(selectedLead.createdAt)}
+                  />
                 </div>
-              )}
+
+                {selectedLead.notes && (
+                  <div className="mt-6 pt-6 border-t border-gray-200">
+                    <h3 className="font-semibold text-gray-900 mb-2">Notes</h3>
+                    <p className="text-gray-600 text-sm whitespace-pre-wrap">
+                      {selectedLead.notes}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3 p-6 border-t border-gray-200 bg-gray-50">
+                <button
+                  onClick={() => setShowViewModel(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => {
+                    handleConvertToClient(selectedLead);
+                    setShowViewModel(false);
+                  }}
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-medium hover:shadow-lg transition"
+                >
+                  Convert to Client
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
       {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900">
-              Delete Lead
-            </h2>
-            <p className="text-gray-600 mb-4">
-              Are you sure you want to delete{" "}
-              <strong>{selectedLead?.name || "this lead"}</strong>? This action
-              cannot be undone.
-            </p>
-            <div className="flex gap-2">
-              <button
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition disabled:opacity-50"
-                onClick={handleConfirmDelete}
-                disabled={loading}
-              >
-                Delete
-              </button>
-              <button
-                className="flex-1 border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition"
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setSelectedLead(null);
-                }}
-              >
-                Cancel
-              </button>
+      {showDeleteModal && selectedLead && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50"
+            onClick={() => setShowDeleteModal(false)}
+          />
+
+          <div className="relative min-h-screen flex items-center justify-center p-4">
+            <div className="relative bg-white rounded-2xl w-full max-w-sm shadow-2xl">
+              <div className="p-6 text-center">
+                <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                  <Trash2 size={24} className="text-red-600" />
+                </div>
+
+                <h2 className="text-xl font-bold text-gray-900 mb-2">
+                  Delete Lead?
+                </h2>
+                <p className="text-gray-600 mb-6">
+                  Are you sure you want to delete{" "}
+                  <span className="font-semibold">{selectedLead.name}</span>?
+                  This action cannot be undone.
+                </p>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowDeleteModal(false)}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleConfirmDelete}
+                    disabled={loading}
+                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition disabled:opacity-50"
+                  >
+                    {loading ? "Deleting..." : "Delete"}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       )}
     </>
+  );
+}
+
+// Helper Components
+function StatCard({ title, value, icon: Icon, color }) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-gray-600 text-sm font-medium">{title}</p>
+          <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
+        </div>
+        <div className={`bg-gradient-to-br ${color} p-3 rounded-xl text-white`}>
+          <Icon size={24} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DetailItem({ label, value }) {
+  return (
+    <div>
+      <p className="text-sm text-gray-600 font-medium">{label}</p>
+      <p className="text-gray-900 font-semibold mt-1">{value || "-"}</p>
+    </div>
   );
 }

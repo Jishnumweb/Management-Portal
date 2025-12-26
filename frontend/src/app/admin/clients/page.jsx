@@ -14,7 +14,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import useAdminStore from "@/stores/useAdminStore";
-import toast from "react-hot-toast"
+import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 const ClientsPage = () => {
@@ -38,8 +38,8 @@ const ClientsPage = () => {
   //     },
   //   },
   // ])
-  
-  const [searchTerm, setSearchTerm] = useState("")
+
+  const [searchTerm, setSearchTerm] = useState("");
   const [filterCity, setFilterCity] = useState("");
   const [filterState, setFilterState] = useState("");
   const [showAddSidebar, setShowAddSidebar] = useState(false);
@@ -244,50 +244,50 @@ const ClientsPage = () => {
     fetchClients();
   }, [page, limit, searchTerm]);
 
-useEffect(() => {
-  // Only run on client side
-  if (typeof window !== 'undefined') {
-    const searchParams = new URLSearchParams(window.location.search);
-    const convert = searchParams.get("convert");
-    if (convert === "true") {
-      const name = searchParams.get("name") || "";
-      const email = searchParams.get("email") || "";
-      const company_name = searchParams.get("company_name") || "";
+  useEffect(() => {
+    // Only run on client side
+    if (typeof window !== "undefined") {
+      const searchParams = new URLSearchParams(window.location.search);
+      const convert = searchParams.get("convert");
+      if (convert === "true") {
+        const name = searchParams.get("name") || "";
+        const email = searchParams.get("email") || "";
+        const company_name = searchParams.get("company_name") || "";
 
-      // Prefill the form
-      setFormData({
-        client_name: name,
-        official_email: email,
-        official_phone: "",
-        alternate_phone: "",
-        alternate_email: "",
-        website: "",
-        gst_number: "",
-        company: {
-          company_name,
-          company_address: "",
-          pin_code: "",
-          city: "",
-          state: "",
-          country: "",
-        },
-      });
+        // Prefill the form
+        setFormData({
+          client_name: name,
+          official_email: email,
+          official_phone: "",
+          alternate_phone: "",
+          alternate_email: "",
+          website: "",
+          gst_number: "",
+          company: {
+            company_name,
+            company_address: "",
+            pin_code: "",
+            city: "",
+            state: "",
+            country: "",
+          },
+        });
 
-      // Open edit sidebar
-      setShowAddSidebar(true)
+        // Open edit sidebar
+        setShowAddSidebar(true);
+      }
     }
-  }
-}, []); // Remove searchParams from dependencies
+  }, []); // Remove searchParams from dependencies
 
-useEffect(() => {
-  // Only run on client side
-  if (typeof window !== 'undefined') {
-    const searchParams = new URLSearchParams(window.location.search);
-    if (searchParams.get("convert") === "true") {
-      router.replace("/admin/clients"); // removes ?convert=true from URL
+  useEffect(() => {
+    // Only run on client side
+    if (typeof window !== "undefined") {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.get("convert") === "true") {
+        router.replace("/admin/clients"); // removes ?convert=true from URL
+      }
     }
-  }
-}, [router]); // Add router to dependencies
+  }, [router]); // Add router to dependencies
 
   return (
     <div className="min-h-screen ">
@@ -302,7 +302,7 @@ useEffect(() => {
 
         {/* Filter Bar */}
         <div className="flex flex-wrap gap-3 items-center mb-6 p-4 rounded-lg bg-white border border-slate-300">
-          <div className="flex-1 min-w-48">
+          <div className="flex-1 min-w-48 z-0">
             <div className="relative">
               <Search className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
               <input
@@ -310,7 +310,7 @@ useEffect(() => {
                 placeholder="Search clients..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2  border border-slate-300 rounded-lg text-black placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition"
+                className="w-full pl-10 pr-4 py-2   border border-slate-300 rounded-lg text-black placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition"
               />
             </div>
           </div>
@@ -440,7 +440,7 @@ useEffect(() => {
 
       {/* Add Client Sidebar */}
       {showAddSidebar && (
-        <div className="fixed inset-0 z-50">
+        <div className="fixed inset-0 z-50 ">
           <div
             className="absolute inset-0 bg-black/50"
             onClick={() => setShowAddSidebar(false)}
@@ -769,7 +769,6 @@ useEffect(() => {
                       <div className="h-4 bg-slate-300 rounded w-24 mb-2" />
                       <div className="h-10 bg-slate-300 rounded animate-pulse" />
                     </div>
-                    
                   ))}
                 </div>
               ) : (

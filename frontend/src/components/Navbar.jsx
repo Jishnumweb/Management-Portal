@@ -27,7 +27,7 @@ import Message from "./admin/Message";
 import useAuthStore from "@/stores/useAuthStore";
 import { useRouter } from "next/navigation";
 
-export function Navbar({ setSidebarOpen }) {
+export function Navbar({ sidebarOpen, setSidebarOpen }) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [mounted, setMounted] = useState(false);
   const [messageOpen, setMessageOpen] = useState(false);
@@ -223,10 +223,10 @@ export function Navbar({ setSidebarOpen }) {
   }, [isDragging, dragOffset]);
 
   return (
-    <header className="sticky top-0 z-10   bg-[#f5f5f5] border-b border-gray-200 px-4 md:px-16 py-3 flex items-center justify-between ">
+    <header className="sticky top-0 z-10   bg-[#131212] border-b border-gray-200 px-4 md:px-16 py-3 flex items-center justify-between ">
       {/* Left Section */}
       <div className="hidden md:flex flex-col items-center py-2 rounded-lg">
-        <div className="text-lg font-semibold text-[#00aeef]">
+        <div className="text-lg font-semibold text-[#D2F961]">
           {mounted ? formatTime(currentTime) : "--:--:--"}
         </div>
         <div className="text-xs text-gray-600">
@@ -234,24 +234,31 @@ export function Navbar({ setSidebarOpen }) {
         </div>
       </div>
 
-      <SidebarTrigger
-        className="md:hidden"
-        onClick={() => setSidebarOpen(true)}
-      />
+      {sidebarOpen ? (
+        <SidebarTrigger
+          className="md:hidden text-[#D2F961]"
+          onClick={() => setSidebarOpen(false)}
+        />
+      ) : (
+        <SidebarTrigger
+          className="md:hidden text-[#D2F961]"
+          onClick={() => setSidebarOpen(true)}
+        />
+      )}
 
       {/* Right Section */}
       <div className="flex items-center gap-3">
-        <h1 className="uppercase text-[#00aeef] font-bold md:block hidden">
+        {/* <h1 className="uppercase text-[#00aeef] font-bold md:block hidden">
           Jishnu M
-        </h1>
+        </h1> */}
 
         <Button
           variant="ghost"
           size="icon"
-          className="relative hover:bg-gray-100"
+          className="relative hover:bg-gray-100 text-[#D2F961]"
           onClick={() => setCalendarOpen(!calendarOpen)}
         >
-          <Calendar size={20} className="text-gray-600" />
+          <Calendar size={20} className="text-[#D2F961]" />
         </Button>
 
         <Button
@@ -260,7 +267,7 @@ export function Navbar({ setSidebarOpen }) {
           className="relative hover:bg-gray-100"
           onClick={() => setCalculatorOpen(!calculatorOpen)}
         >
-          <Calculator size={20} className="text-gray-600" />
+          <Calculator size={20} className="text-[#D2F961]" />
         </Button>
 
         <Button
@@ -269,7 +276,7 @@ export function Navbar({ setSidebarOpen }) {
           className="relative hover:bg-gray-100"
           onClick={handleClick}
         >
-          <Bell size={20} className="text-gray-600" />
+          <Bell size={20} className="text-[#D2F961] " />
           <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
         </Button>
 

@@ -18,8 +18,10 @@ export default function SidebarLayout({ children }) {
 
         {/* MAIN CONTENT */}
         <div className="flex flex-col flex-1 min-w-0 ml-0 md:ml-80 transition-all duration-300">
-          <Navbar setSidebarOpen={setSidebarOpen} />
-          <main className="flex-1 overflow-y-auto lg:p-10">{children}</main>
+          <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+          <main className="flex-1 overflow-y-auto lg:p-5 bg-[#ffffff]">
+            {children}
+          </main>
         </div>
       </div>
     </SidebarProvider>
